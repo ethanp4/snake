@@ -21,7 +21,7 @@ int main() {
   SDL_CreateWindowAndRenderer(res.x, res.y, 0, &window, &renderer);
 
   bool running = true;
-
+  Vector2 movementdir = (Vector2) {0,0};
   while (running) {
     while (SDL_PollEvent(&e)) {
       switch (e.type) {
@@ -34,13 +34,16 @@ int main() {
         case SDL_KEYDOWN:
           switch(e.key.keysym.sym) {
             case SDLK_UP:
-
+              movementdir = UP;
             break;
             case SDLK_DOWN:
+              movementdir = DOWN;
             break;
             case SDLK_LEFT:
+              movementdir = LEFT;
             break;
             case SDLK_RIGHT:
+              movementdir = RIGHT;
             break;
           }
 
