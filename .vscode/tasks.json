@@ -6,8 +6,9 @@
           "command": "/usr/bin/clang++",
           "args": [
             "-lSDL2",
+            "-lSDL2_ttf",
             "-g",
-            "${fileDirname}/Vector2.cpp",
+            "${fileDirname}/classes/Vector2.cpp",
             "-g",
             "${file}",
             "-o",

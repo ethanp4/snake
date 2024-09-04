@@ -1,12 +1,12 @@
-#include <SDL2/SDL_pixels.h>
-#include <SDL2/SDL_timer.h>
-#include <cstdlib>
+#include <SDL2/SDL.h>
+#include "SDL2/SDL_ttf.h"
+// #include <SDL2/SDL_render.h>
+// #include <SDL2/SDL_surface.h>
 #include <stdio.h>
 #include <random>
 #include <iostream>
-#include <SDL2/SDL.h>
 #include <vector>
-#include "Vector2.h"
+#include "classes/Vector2.h"
 
 using namespace std;
 
@@ -138,6 +138,16 @@ int main() {
   SDL_RenderSetScale(renderer,16,16);
   SDL_Event e;
 
+  //text
+  TTF_Font* font = TTF_OpenFont("fonts/Tiny5-Regular.ttf", 7);
+  SDL_Surface* gameoverSurface = TTF_RenderText_Solid(font, "Gameover", {255,255,255});
+  SDL_Texture* gameoverTexture = SDL_CreateTextureFromSurface(renderer, gameoverSurface);
+  SDL_Rect gameoverRect;
+  gameoverRect.x = 0;
+  gameoverRect.y = 0;
+  gameoverRect.w = 40;
+  gameoverRect.h = 40;
+
   //initialize playfield
   for (int i = 0; i < res.x; i++) {
     for (int j = 0; j < res.y; j++) {
@@ -221,10 +231,13 @@ int main() {
 
     //draw objects
     draw_pixels(*renderer);
-    SDL_RenderPresent(renderer);
+    SDL_RenderCopy(renderer, gameoverTexture, NULL, &gameoverRect);
     if (gameOver) { 
       movementDir = {0,0}; 
+      // SDL_FreeSurface(gameoverSurface);
+      // SDL_DestroyTexture(gameoverTexture);
     }
+    SDL_RenderPresent(renderer);
     SDL_Delay(10);
   }
 }
