@@ -5,7 +5,7 @@
 #include <random>
 #include <iostream>
 #include <vector>
-#include "classes/Vector2.h"
+#include "Vector2.h"
 
 using namespace std;
 
@@ -51,7 +51,7 @@ void quit_game() {
 }
 
 //timer'd functions
-Uint32 move_player(Uint32 i, void *param) {
+Uint32 move_player(Uint32 interval, void *param) {
   playField[playerPos.x][playerPos.y] = NONE;
   //add the previous position to the start of the vector
   positionHistory.insert(positionHistory.begin(), playerPos);
@@ -100,13 +100,13 @@ Uint32 move_player(Uint32 i, void *param) {
     playField[pos.x][pos.y] = PLAYER;
   }
   // cout << playerPos.toString() << endl;
-  return i;
+  return interval;
 }
 
-Uint32 spawn_food(Uint32 i, void *param) {
+Uint32 spawn_food(Uint32 interval, void *param) {
   //stop spawning while gameover
   if (gameOver) {
-    return i;
+    return interval;
   }
   do {
     Vector2 pos = {(int)distlen(rng), (int)distlen(rng)};
@@ -118,7 +118,7 @@ Uint32 spawn_food(Uint32 i, void *param) {
     }
     //if food is low then spawn more
   } while (foodCount < minFood);
-  return i;
+  return interval;
 }
 
 void draw_pixels(SDL_Renderer &renderer) {
@@ -228,7 +228,7 @@ int main() {
   movementDir = getRandomDir();
   //select starting direction and position
 
-  playerPos = (Vector2) {(int)distlen(rng), (int)distlen(rng)};
+  playerPos = {(int)distlen(rng), (int)distlen(rng)};
 
   //create timers
   auto moveTimer = SDL_AddTimer(100, move_player, NULL);

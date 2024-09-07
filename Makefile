@@ -1,15 +1,15 @@
 CXX?=g++
-SDL2FLAGS=$(shell pkg-config sdl2 --cflags --libs)
 SDL2TTFFLGS=$(shell pkg-config SDL2_ttf --cflags --libs)
-CXXFLAGS?=-std=c++11 -Wall -pedantic -Werror -Wshadow -Wstrict-aliasing -Wstrict-overflow
+CXXFLAGS?=-std=c++11 -Wall -pedantic -Wshadow
 
 output: main.o Vector2.o
-	g++ main.o Vector2.o -o output
+	${CXX} main.o Vector2.o -o output ${CXXFLAGS} ${SDL2TTFFLGS}
 
-main.o: main.cpp
-	g++ -c main.cpp
+main.o: main.cpp 
+	${CXX} -c main.cpp ${CXXFLAGS}
 
-Vector2.o: message.cpp message.h
-	g++ -c Vector2.cpp
+Vector2.o: Vector2.cpp Vector2.h
+	${CXX} -c Vector2.cpp ${CXXFLAGS}
 
 clean: 
+	rm *.o output

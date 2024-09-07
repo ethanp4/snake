@@ -8,7 +8,7 @@ const Vector2 Vector2::LEFT(-1,0);
 const Vector2 Vector2::RIGHT(1,0);
 
 // constructor
-Vector2::Vector2(int x, int y): x(x), y(y){ }
+Vector2::Vector2(int x_, int y_): x(x_), y(y_){ }
 
 //operators
 Vector2& Vector2::operator=(const Vector2& other) {
