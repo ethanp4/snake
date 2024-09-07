@@ -1,5 +1,6 @@
 #include <SDL2/SDL.h>
 #include "SDL2/SDL_ttf.h"
+#include <SDL2/SDL_keycode.h>
 #include <SDL2/SDL_render.h>
 #include <cstddef>
 #include <stdio.h>
@@ -105,6 +106,10 @@ Uint32 move_player(Uint32 i, void *param) {
 }
 
 Uint32 spawn_food(Uint32 i, void *param) {
+  //stop spawning while gameover
+  if (gameOver) {
+    return i;
+  }
   do {
     Vector2 pos = {(int)distlen(rng), (int)distlen(rng)};
     if (playField[pos.x][pos.y] != PLAYER) {
@@ -171,6 +176,33 @@ void render_text(SDL_Renderer &renderer) {
   }
 }
 
+Vector2 getRandomDir() {
+    switch(distdir(rng)) {
+    case 0:
+      return Vector2::UP;
+    break;
+    case 1:
+      return Vector2::DOWN;
+    break;
+    case 2:
+      return Vector2::LEFT;
+    break;
+    case 3:
+      return Vector2::RIGHT;
+    break;
+    //suppress a warning
+    default:
+      return Vector2::UP;
+  }
+}
+
+void restartGame() {
+  gameOver = false;
+  playerLength = 0;
+  movementDir = getRandomDir();
+  positionHistory.clear();
+}
+
 int main() {
   //initialize sdl stuff
   SDL_Init(SDL_INIT_EVERYTHING);
@@ -184,7 +216,6 @@ int main() {
   bigFont = TTF_OpenFont("./fonts/Tiny5-Regular.ttf", 72);
   littleFont = TTF_OpenFont("./fonts/Tiny5-Regular.ttf", 36);
 
-
   //initialize playfield
   for (int i = 0; i < playFieldSize; i++) {
     for (int j = 0; j < playFieldSize; j++) {
@@ -196,21 +227,9 @@ int main() {
       }
     }
   }
+  movementDir = getRandomDir();
   //select starting direction and position
-  switch(distdir(rng)) {
-    case 0:
-      movementDir = Vector2::UP;
-    break;
-    case 1:
-      movementDir = Vector2::DOWN;
-    break;
-    case 2:
-      movementDir = Vector2::LEFT;
-    break;
-    case 3:
-      movementDir = Vector2::RIGHT;
-    break;
-  }
+
   playerPos = (Vector2) {(int)distlen(rng), (int)distlen(rng)};
 
   //create timers
@@ -236,6 +255,11 @@ int main() {
               quit_game();
             break;
             //movement
+            case SDLK_SPACE:
+              if (gameOver) {
+                restartGame();
+              }
+            break;
             case SDLK_UP:
               //prevent turning backwards
               if (movementDir != Vector2::DOWN){
