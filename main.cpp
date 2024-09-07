@@ -1,7 +1,5 @@
 #include <SDL2/SDL.h>
-#include "SDL2/SDL_ttf.h"
-#include <SDL2/SDL_keycode.h>
-#include <SDL2/SDL_render.h>
+#include <SDL2/SDL_ttf.h>
 #include <cstddef>
 #include <stdio.h>
 #include <random>
@@ -237,6 +235,7 @@ int main() {
   timers.push_back(moveTimer);
   auto spawnFoodTimer = SDL_AddTimer(5000, spawn_food, NULL);
   timers.push_back(spawnFoodTimer);
+
   
   printf("Running\n");
   //main loop
