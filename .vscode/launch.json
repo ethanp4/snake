@@ -1,6 +1,16 @@
 {
   "version": "0.2.0",
   "configurations": [
+    {
+      "name": "make build and debug project",
+      "type": "lldb",
+      "request": "launch",
+      "program": "${fileDirname}/output",
+      "args": [],
+      "terminal": "integrated",
+      "cwd": "${workspaceFolder}",
+      "preLaunchTask": "run 'make'"
+    },
       {
           "name": "clang++ build and debug active file",
           "type": "lldb",
