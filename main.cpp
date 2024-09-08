@@ -1,4 +1,6 @@
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_render.h>
+#include <SDL2/SDL_surface.h>
 #include <SDL2/SDL_ttf.h>
 #include <cstddef>
 #include <stdio.h>
@@ -121,7 +123,7 @@ Uint32 spawn_food(Uint32 interval, void *param) {
   return interval;
 }
 
-void draw_pixels(SDL_Renderer &renderer) {
+void draw_pixels(SDL_Renderer *renderer) {
   SDL_Colour colour;
   for (int i = 0; i < playFieldSize; i++) {
     for (int j = 0; j < playFieldSize; j++){
@@ -140,37 +142,46 @@ void draw_pixels(SDL_Renderer &renderer) {
           colour = {26, 209, 180, 255};
         break;      
       }
-      SDL_SetRenderDrawColor(&renderer, colour.r, colour.g, colour.b, colour.a);
+      SDL_SetRenderDrawColor(renderer, colour.r, colour.g, colour.b, colour.a);
       SDL_Rect pixel = {i*pixelSize, j*pixelSize, pixelSize, pixelSize};
-      SDL_RenderFillRect(&renderer, &pixel);
+      SDL_RenderFillRect(renderer, &pixel);
       // SDL_RenderDrawPoint(&renderer, i, j);
     }
   }
 }
 
-void render_text(SDL_Renderer &renderer) {
+void render_text(SDL_Renderer *renderer) {
   SDL_Surface* scoreSurface = TTF_RenderText_Solid(littleFont, to_string(playerLength).c_str(), {255,255,255});
-  SDL_Texture* scoreTexture = SDL_CreateTextureFromSurface(&renderer, scoreSurface);
+  SDL_Texture* scoreTexture = SDL_CreateTextureFromSurface(renderer, scoreSurface);
   int scoreTexW, scoreTexH;
   SDL_QueryTexture(scoreTexture, NULL, NULL, &scoreTexW, &scoreTexH);
   SDL_Rect scoreRect = { 0, 0, scoreTexW, scoreTexH};
-  SDL_RenderCopy(&renderer, scoreTexture, NULL, &scoreRect);
+  SDL_RenderCopy(renderer, scoreTexture, NULL, &scoreRect);
+
+  SDL_FreeSurface(scoreSurface);
+  SDL_DestroyTexture(scoreTexture);
   
   if (gameOver) {
     SDL_Surface* gameoverSurface = TTF_RenderText_Solid(bigFont, "Gameover", {255,255,255});
-    SDL_Texture* gameoverTexture = SDL_CreateTextureFromSurface(&renderer, gameoverSurface);
+    SDL_Texture* gameoverTexture = SDL_CreateTextureFromSurface(renderer, gameoverSurface);
     int texW, texH;
     SDL_QueryTexture(gameoverTexture, NULL, NULL, &texW, &texH);
     SDL_Rect gameoverRect = { (res-texW)/2, res/2-texH, texW, texH };
 
     SDL_Surface* infoSurface = TTF_RenderText_Solid(littleFont, "Press space to restart", {255,255,255});
-    SDL_Texture* infoTexture = SDL_CreateTextureFromSurface(&renderer, infoSurface);
+    SDL_Texture* infoTexture = SDL_CreateTextureFromSurface(renderer, infoSurface);
     int infoTexW, infoTexH;
     SDL_QueryTexture(infoTexture, NULL, NULL, &infoTexW, &infoTexH);
     SDL_Rect infoRect = { (res-infoTexW)/2, res/2, infoTexW, infoTexH };
 
-    SDL_RenderCopy(&renderer, gameoverTexture, NULL, &gameoverRect);
-    SDL_RenderCopy(&renderer, infoTexture, NULL, &infoRect);
+    SDL_RenderCopy(renderer, gameoverTexture, NULL, &gameoverRect);
+    SDL_RenderCopy(renderer, infoTexture, NULL, &infoRect);
+
+    SDL_DestroyTexture(gameoverTexture);
+    SDL_DestroyTexture(infoTexture);
+
+    SDL_FreeSurface(gameoverSurface);
+    SDL_FreeSurface(infoSurface);
   }
 }
 
@@ -289,8 +300,8 @@ int main() {
     SDL_RenderClear(renderer);
 
     //draw objects
-    draw_pixels(*renderer);
-    render_text(*renderer);
+    draw_pixels(renderer);
+    render_text(renderer);
 
     if (gameOver) { 
       movementDir = {0,0}; 
@@ -299,4 +310,3 @@ int main() {
     SDL_Delay(10);
   }
 }
-

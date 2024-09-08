@@ -4,7 +4,7 @@ CXXFLAGS?=-std=c++11 -Wall -pedantic -Wshadow
 
 .PHONY: clean run main debug
 
-# all: build
+all: main
 
 main: CXXFLAGS+=-O2
 
