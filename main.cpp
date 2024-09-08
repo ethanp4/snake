@@ -1,10 +1,5 @@
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_render.h>
-#include <SDL2/SDL_surface.h>
 #include <SDL2/SDL_ttf.h>
-#include <SDL2/SDL_video.h>
-#include <cstddef>
-#include <stdio.h>
 #include <random>
 #include <iostream>
 #include <vector>
@@ -47,7 +42,7 @@ TTF_Font* littleFont;
 
 void quit_game(SDL_Window *window, SDL_Renderer* renderer) {
   running = false;
-  for (int i = 0; i < timers.size(); i++) {
+  for (int i = 0; i < (int)timers.size(); i++) {
     SDL_RemoveTimer(timers[i]);
   }
   SDL_DestroyRenderer(renderer);
@@ -93,14 +88,14 @@ Uint32 move_player(Uint32 interval, void *param) {
   playField[playerPos.x][playerPos.y] = PLAYER;
 
   //limit the size of the history
-  if (positionHistory.size() > playerLength) {
+  if ((int)positionHistory.size() > playerLength) {
     auto end = positionHistory.back();
     playField[end.x][end.y] = NONE;
     positionHistory.pop_back();
   }
 
   //update playfield array
-  for (int i = 0; i < positionHistory.size(); i++) {
+  for (int i = 0; i < (int)positionHistory.size(); i++) {
     auto pos = positionHistory[i];
     playField[pos.x][pos.y] = PLAYER;
   }
