@@ -2,6 +2,7 @@
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_surface.h>
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_video.h>
 #include <cstddef>
 #include <stdio.h>
 #include <random>
@@ -44,11 +45,13 @@ uniform_int_distribution<mt19937::result_type> distlen(1, playFieldSize);
 TTF_Font* bigFont;
 TTF_Font* littleFont;
 
-void quit_game() {
+void quit_game(SDL_Window *window, SDL_Renderer* renderer) {
   running = false;
   for (int i = 0; i < timers.size(); i++) {
     SDL_RemoveTimer(timers[i]);
   }
+  SDL_DestroyRenderer(renderer);
+  SDL_DestroyWindow(window);
   cout << "Cleanly(?) exited" << endl; 
 }
 
@@ -140,7 +143,10 @@ void draw_pixels(SDL_Renderer *renderer) {
         break;
         case FOOD:
           colour = {26, 209, 180, 255};
-        break;      
+        break;   
+        //this case shouldnt ever happen
+        default:
+          colour = {0,0,0,0};   
       }
       SDL_SetRenderDrawColor(renderer, colour.r, colour.g, colour.b, colour.a);
       SDL_Rect pixel = {i*pixelSize, j*pixelSize, pixelSize, pixelSize};
@@ -255,14 +261,14 @@ int main() {
       switch (e.type) {
         //exit 
         case SDL_QUIT:
-          quit_game();
+          quit_game(window, renderer);
         break;
 
         //keypress
         case SDL_KEYDOWN:
           switch(e.key.keysym.sym) {
             case SDLK_ESCAPE:
-              quit_game();
+              quit_game(window, renderer);
             break;
             //movement
             case SDLK_SPACE:
