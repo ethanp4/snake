@@ -24,5 +24,5 @@ Vector2.o: Vector2.cpp Vector2.h
 clean: 
 	rm *.o output
 
-run:
+run: main
 	./output
