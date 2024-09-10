@@ -2,3 +2,5 @@ main
 a.out
 *.o
 output
+build
+.cache

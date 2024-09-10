@@ -3,7 +3,7 @@
 #include <random>
 #include <iostream>
 #include <vector>
-#include "Vector2.h"
+#include "../include/Vector2.h"
 
 using namespace std;
 
@@ -206,9 +206,26 @@ Vector2 getRandomDir() {
   }
 }
 
+void initPlayfield() {
+  
+  //initialize playfield
+  for (int i = 0; i < playFieldSize; i++) {
+    for (int j = 0; j < playFieldSize; j++) {
+      if (distarea(rng) < approxStartingFood){
+        playField[i][j] = FOOD;
+        foodCount++;
+      } else {
+        playField[i][j] = NONE;
+      }
+    }
+  }
+}
+
 void restartGame() {
   gameOver = false;
+  foodCount = 0;
   playerLength = 0;
+  initPlayfield();
   movementDir = getRandomDir();
   positionHistory.clear();
 }
@@ -223,20 +240,10 @@ int main() {
 
   //text
   TTF_Init();
-  bigFont = TTF_OpenFont("./fonts/Tiny5-Regular.ttf", 72);
-  littleFont = TTF_OpenFont("./fonts/Tiny5-Regular.ttf", 36);
+  bigFont = TTF_OpenFont("../fonts/Tiny5-Regular.ttf", 72);
+  littleFont = TTF_OpenFont("../fonts/Tiny5-Regular.ttf", 36);
 
-  //initialize playfield
-  for (int i = 0; i < playFieldSize; i++) {
-    for (int j = 0; j < playFieldSize; j++) {
-      if (distarea(rng) < approxStartingFood){
-        playField[i][j] = FOOD;
-        foodCount++;
-      } else {
-        playField[i][j] = NONE;
-      }
-    }
-  }
+  initPlayfield();
   movementDir = getRandomDir();
   //select starting direction and position
 
@@ -248,7 +255,6 @@ int main() {
   auto spawnFoodTimer = SDL_AddTimer(5000, spawn_food, NULL);
   timers.push_back(spawnFoodTimer);
 
-  
   printf("Running\n");
   //main loop
   while (running) {
@@ -308,6 +314,6 @@ int main() {
       movementDir = {0,0}; 
     }
     SDL_RenderPresent(renderer);
-    SDL_Delay(10);
+    SDL_Delay(8);
   }
 }
