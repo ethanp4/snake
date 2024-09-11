@@ -19,7 +19,14 @@ void postScore(int score) {
   if (curl) {
     curl_easy_setopt(curl, CURLOPT_URL, "http://localhost:8080/leaderboard");
     curl_easy_setopt(curl, CURLOPT_POST,1L);
-    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, std::format("score={}", score).c_str());
+
+    struct curl_slist *slist1 = NULL;
+    slist1 = curl_slist_append(slist1, "Content-Type: application/json");
+    slist1 = curl_slist_append(slist1, "Accept: application/json");
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, slist1);
+
+    auto json = std::format("{{\"score\": \"{}\"}}", score); 
+    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, json.c_str());
   }
 
   res = curl_easy_perform(curl);
@@ -51,8 +58,9 @@ void getLeaderboard() {
     res = curl_easy_perform(curl);
     if (res != CURLE_OK) {
       std::cout << std::format("get leaderboard failed: {}\n", curl_easy_strerror(res)) << std::endl;
-    }
-    std::cout << response_string;
+    } 
+
+    // std::cout << response_string;
     curl_easy_cleanup(curl);
   }
 }

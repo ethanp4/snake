@@ -258,11 +258,11 @@ int main() {
   auto spawnFoodTimer = SDL_AddTimer(5000, spawn_food, NULL);
   timers.push_back(spawnFoodTimer);
 
-  printf("Running\n");
+  cout << "Running" << endl;
 
   initRequests();
   postScore(15);
-  getLeaderboard();
+  // getLeaderboard();
 
   //main loop
   while (running) {
