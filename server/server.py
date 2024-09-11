@@ -7,7 +7,15 @@ idCount = 0
 
 @app.route("/")
 def root():
-  return render_template("leaderboard.html", scoresList=scores)
+  html = ""
+  for score in scores:
+    html += f"""
+              <tr>
+                <td>{score["id"]}</td>
+                <td>{score["score"]}</td>
+              </tr>
+                """
+  return render_template("leaderboard.html", scoresList=html)
 
 @app.route("/leaderboard", methods=['GET'])
 def getLeaderboard():
@@ -16,9 +24,7 @@ def getLeaderboard():
 @app.route("/leaderboard", methods=['POST'])
 def postScore():
   global idCount
-  score = request.args.get('score')
-  # print(request.args.getlist)
-  print(request.get_json())
+  score = request.get_json()["score"]
   
   if score is None:
     return "Bad request: no score given", 400
