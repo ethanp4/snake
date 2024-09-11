@@ -3,12 +3,14 @@
 #include <random>
 #include <iostream>
 #include <vector>
-#include "../include/Vector2.h"
+#include "../include/vector2.h"
+#include "../include/web-requests.h"
 
 using namespace std;
 
 enum objects { NONE, PLAYER, FOOD };
 
+bool window_resized = false;
 //global stuff
 bool running = true;
 bool gameOver = false;
@@ -18,7 +20,7 @@ int foodCount = 0;
 int playerLength = 0;
 vector<Vector2> positionHistory;
 
-//constants 
+//constants
 const int res = 600;
 const int resScale = 1;
 const int pixelSize = 18;
@@ -47,7 +49,7 @@ void quit_game(SDL_Window *window, SDL_Renderer* renderer) {
   }
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
-  cout << "Cleanly(?) exited" << endl; 
+  cout << "Cleanly(?) exited" << endl;
 }
 
 //timer'd functions
@@ -138,10 +140,10 @@ void draw_pixels(SDL_Renderer *renderer) {
         break;
         case FOOD:
           colour = {26, 209, 180, 255};
-        break;   
+        break;
         //this case shouldnt ever happen
         default:
-          colour = {0,0,0,0};   
+          colour = {0,0,0,0};
       }
       SDL_SetRenderDrawColor(renderer, colour.r, colour.g, colour.b, colour.a);
       SDL_Rect pixel = {i*pixelSize, j*pixelSize, pixelSize, pixelSize};
@@ -161,14 +163,13 @@ void render_text(SDL_Renderer *renderer) {
 
   SDL_FreeSurface(scoreSurface);
   SDL_DestroyTexture(scoreTexture);
-  
+
   if (gameOver) {
     SDL_Surface* gameoverSurface = TTF_RenderText_Solid(bigFont, "Gameover", {255,255,255});
     SDL_Texture* gameoverTexture = SDL_CreateTextureFromSurface(renderer, gameoverSurface);
     int texW, texH;
     SDL_QueryTexture(gameoverTexture, NULL, NULL, &texW, &texH);
     SDL_Rect gameoverRect = { (res-texW)/2, res/2-texH, texW, texH };
-
     SDL_Surface* infoSurface = TTF_RenderText_Solid(littleFont, "Press space to restart", {255,255,255});
     SDL_Texture* infoTexture = SDL_CreateTextureFromSurface(renderer, infoSurface);
     int infoTexW, infoTexH;
@@ -207,7 +208,7 @@ Vector2 getRandomDir() {
 }
 
 void initPlayfield() {
-  
+
   //initialize playfield
   for (int i = 0; i < playFieldSize; i++) {
     for (int j = 0; j < playFieldSize; j++) {
@@ -237,9 +238,11 @@ int main() {
   auto renderer = SDL_CreateRenderer(window, -1, 0);
   SDL_RenderSetScale(renderer,resScale,resScale);
   SDL_Event e;
-
+  SDL_SetWindowResizable(window, SDL_TRUE);
   //text
   TTF_Init();
+
+  //this file path isnt reliable
   bigFont = TTF_OpenFont("../fonts/Tiny5-Regular.ttf", 72);
   littleFont = TTF_OpenFont("../fonts/Tiny5-Regular.ttf", 36);
 
@@ -256,11 +259,20 @@ int main() {
   timers.push_back(spawnFoodTimer);
 
   printf("Running\n");
+
+  initRequests();
+  postScore(15);
+  getLeaderboard();
+
   //main loop
   while (running) {
     while (SDL_PollEvent(&e)) {
       switch (e.type) {
-        //exit 
+        case SDL_WINDOWEVENT_RESIZED:
+        case SDL_WINDOWEVENT_SIZE_CHANGED:
+          window_resized = true;
+        break;
+        //exit
         case SDL_QUIT:
           quit_game(window, renderer);
         break;
@@ -291,7 +303,7 @@ int main() {
             case SDLK_LEFT:
               if (movementDir != Vector2::RIGHT) {
                 movementDir = Vector2::LEFT;
-              } 
+              }
             break;
             case SDLK_RIGHT:
               if (movementDir != Vector2::LEFT) {
@@ -302,6 +314,10 @@ int main() {
         break;
       }
     }
+    if(window_resized) {
+      cout << "window resized!" << endl;
+      window_resized = false;
+    }
     //clear screen
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
@@ -310,8 +326,8 @@ int main() {
     draw_pixels(renderer);
     render_text(renderer);
 
-    if (gameOver) { 
-      movementDir = {0,0}; 
+    if (gameOver) {
+      movementDir = {0,0};
     }
     SDL_RenderPresent(renderer);
     SDL_Delay(8);

@@ -1,4 +1,4 @@
-#include "../include/Vector2.h"
+#include "../include/vector2.h"
 #include <sstream>
 
 // initialise constants

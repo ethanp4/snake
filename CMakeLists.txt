@@ -7,12 +7,14 @@ project(snake)
 
 find_package(SDL2 REQUIRED)
 find_package(SDL2_ttf REQUIRED)
+find_package(CURL REQUIRED)
 
-add_library(Vector2 STATIC ./src/Vector2.cpp)
+add_library(vector2 STATIC ./src/vector2.cpp)
+add_library(web-requests STATIC ./src/web-requests.cpp)
 
 # file(GLOB_RECURSE SRC_FILES src/*.cpp)
-add_executable(snake ./src/main.cpp ./src/Vector2.cpp)
-target_link_libraries(snake SDL2 SDL2_ttf)
+add_executable(snake ./src/main.cpp ./src/vector2.cpp ./src/web-requests.cpp)
+target_link_libraries(snake SDL2 SDL2_ttf curl)
 target_include_directories(snake PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # include(FetchContent)
