@@ -5,6 +5,7 @@
 #include <vector>
 #include "../include/vector2.h"
 #include "../include/web-requests.h"
+#include "../include/credentials.h"
 
 using namespace std;
 
@@ -80,6 +81,12 @@ Uint32 move_player(Uint32 interval, void *param) {
     case PLAYER:
       cout << "Game over" << endl;
       gameOver = true;
+      if (authIncluded){
+        cout << "Uploading score" << endl;
+        postScore(playerLength);
+      } else {
+        cout << "Credentials not included" << endl;
+      }
     break;
     case FOOD:
       playerLength++;
@@ -241,7 +248,6 @@ int main() {
   SDL_SetWindowResizable(window, SDL_TRUE);
   //text
   TTF_Init();
-
   //this file path isnt reliable
   bigFont = TTF_OpenFont("../fonts/Tiny5-Regular.ttf", 72);
   littleFont = TTF_OpenFont("../fonts/Tiny5-Regular.ttf", 36);
@@ -261,7 +267,7 @@ int main() {
   cout << "Running" << endl;
 
   initRequests();
-  postScore(15);
+  // postScore(10);
   // getLeaderboard();
 
   //main loop

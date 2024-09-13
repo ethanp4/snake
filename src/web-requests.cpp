@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include "../include/web-requests.h"
+#include "../include/credentials.h"
 
 void initRequests() {
   curl_global_init(CURL_GLOBAL_ALL);
@@ -15,10 +16,12 @@ void cleanupRequests() {
 void postScore(int score) {
   auto curl = curl_easy_init();
   CURLcode res;
-
   if (curl) {
     curl_easy_setopt(curl, CURLOPT_URL, "http://localhost:8080/leaderboard");
     curl_easy_setopt(curl, CURLOPT_POST,1L);
+    curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+
+    curl_easy_setopt(curl, CURLOPT_USERPWD, userpwd);
 
     struct curl_slist *slist1 = NULL;
     slist1 = curl_slist_append(slist1, "Content-Type: application/json");

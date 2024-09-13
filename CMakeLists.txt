@@ -12,6 +12,13 @@ find_package(CURL REQUIRED)
 add_library(vector2 STATIC ./src/vector2.cpp)
 add_library(web-requests STATIC ./src/web-requests.cpp)
 
+add_custom_command(OUTPUT ./include/credentials.h 
+                   COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/credentials.sh 
+                   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+
+add_custom_target(credentials ALL 
+                  DEPENDS ./include/credentials.h)
+
 # file(GLOB_RECURSE SRC_FILES src/*.cpp)
 add_executable(snake ./src/main.cpp ./src/vector2.cpp ./src/web-requests.cpp)
 target_link_libraries(snake SDL2 SDL2_ttf curl)

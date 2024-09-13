@@ -1,9 +1,16 @@
 from flask import Flask, jsonify, render_template, request
+from dotenv import load_dotenv
+import os
 
 app = Flask(__name__, template_folder="html")
 
 scores = []
 idCount = 0
+
+load_dotenv()
+
+authUser = os.getenv("user")
+authPass = os.getenv("pass")
 
 @app.route("/")
 def root():
@@ -19,9 +26,14 @@ def root():
 
 @app.route("/leaderboard", methods=['GET', 'POST'])
 def leaderboard():
+  try:
+    if authUser != request.authorization.username or authPass != request.authorization.password:
+      raise Exception("Incorrect or missing authorization")
+  except:
+    return "Unauthorized", 401
+
   if request.method == 'GET':
     return jsonify(scores), 200
-
   score = request.get_json()["score"]
   if score is None:
     return "Bad request: no score given", 400
