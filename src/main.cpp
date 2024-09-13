@@ -215,7 +215,6 @@ Vector2 getRandomDir() {
 }
 
 void initPlayfield() {
-
   //initialize playfield
   for (int i = 0; i < playFieldSize; i++) {
     for (int j = 0; j < playFieldSize; j++) {
