@@ -26,6 +26,8 @@ class Vector2 {
 
     //tostring
     std::string toString() const;
+
+    friend std::ostream& operator<<(std::ostream& os, const Vector2& v);
 };
 
 #endif

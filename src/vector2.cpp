@@ -42,7 +42,11 @@ bool Vector2::operator!=(const Vector2& other) const {
 
 //tostring
 std::string Vector2::toString() const {
-  std::ostringstream oss;
-  oss << "(" << x << ", " << y << ")";
-  return oss.str().c_str();
+  std::ostringstream os;
+  os << "(" << x << ", " << y << ")";
+  return os.str().c_str();
+}
+
+std::ostream& operator<<(std::ostream& os, const Vector2& v) {
+  return os << v.toString();
 }
